@@ -1,0 +1,35 @@
+{
+  "name": "ralph-web-ui",
+  "version": "1.0.0",
+  "description": "Web UI for monitoring Ralph loops and answering agent questions",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts",
+    "build": "tsc"
+  },
+  "keywords": [
+    "ralph",
+    "droid",
+    "monitoring",
+    "web-ui"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "express": "^4.18.2",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "@types/ws": "^8.5.10",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

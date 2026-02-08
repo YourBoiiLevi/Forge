@@ -1,0 +1,25 @@
+# Specification Files
+
+Place your specification markdown files here. Each spec should describe
+a topic of concern (feature, component, or capability) derived from a
+Job to be Done (JTBD).
+
+## Example Structure
+
+```markdown
+# specs/user-authentication.md
+
+## Overview
+Brief description of what this feature does.
+
+## Requirements
+- Requirement 1
+- Requirement 2
+
+## Acceptance Criteria
+- [ ] Testable criterion 1
+- [ ] Testable criterion 2
+
+## Dependencies
+- Backend API: POST /api/auth/login
+```
