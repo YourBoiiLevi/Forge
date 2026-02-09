@@ -1,11 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { StatusLED, Status } from '../../components/ui/StatusLED';
-import { Button } from '../../components/ui/Button';
-
-// Quick mock since we're not setting up full DOM env yet (or assuming it exists via vitest-dom)
-// ideally we'd set up jsdom environment in vitest config.
 
 describe('StatusLED', () => {
   it('renders correctly', () => {

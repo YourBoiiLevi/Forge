@@ -2,10 +2,12 @@ import http from 'node:http';
 
 import express from 'express';
 
+import { ArtifactStore } from './lib/artifact-store';
 import { HttpError } from './lib/http-error';
 import { corsForLocalhost } from './middleware/cors';
 import { errorHandler } from './middleware/error-handler';
 import { requestLogger } from './middleware/request-logger';
+import { registerApiV1Routes } from './routes/api-v1';
 
 export interface CreateAppOptions {
   /**
@@ -13,10 +15,14 @@ export interface CreateAppOptions {
    * Useful for tests and incremental development.
    */
   registerRoutes?: (app: express.Express) => void;
+
+  /** Optional dependency injection for tests. */
+  artifactStore?: ArtifactStore;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
   const app = express();
+  const artifactStore = options.artifactStore ?? ArtifactStore.fromEnv();
 
   app.disable('x-powered-by');
 
@@ -27,6 +33,8 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   app.get('/health', (_req, res) => {
     res.status(200).json({ status: 'ok' });
   });
+
+  registerApiV1Routes(app, { artifactStore });
 
   options.registerRoutes?.(app);
 

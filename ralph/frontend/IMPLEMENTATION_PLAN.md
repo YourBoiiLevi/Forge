@@ -65,42 +65,27 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Added resilient NDJSON parsing with reconnection logic
 - Added tests for streaming utilities
 
+### Phase 2: Core Components
+
+#### 2.1 Create App Shell and Routing (Completed 2026-02-09)
+- Set up React Router with routes for all main views
+- Implemented persistent TopBar and Layout components
+- Added "Pause All" button and status indicators
+- Created placeholder views for Dashboard, Captain, Tasks, Refinery, Artifacts, Changes
+- Added comprehensive tests for routing and shell components
+
 ---
 
 ## Prioritized Tasks
 
 ### Phase 2: Core Components
 
-#### 2.1 Create App Shell and Routing
-**Complexity:** Small  
-**Dependencies:** 1.2
-
-Set up the application shell with routing.
-
-**Acceptance Criteria:**
-- Root `App` component with router
-- Routes for all views:
-  - `/` → Dashboard/Run View
-  - `/captain/:runId` → Captain Interview View
-  - `/tasks/:runId/:taskId` → Task Detail View
-  - `/refinery/:runId/:taskId` → Refinery View
-  - `/artifacts/:runId` → Artifacts Browser
-  - `/change-requests/:runId` → Change Request View
-- Layout component with persistent top bar
-- Top bar with:
-  - Run status LED
-  - Repo URL
-  - Model name
-  - Elapsed time (live updating)
-  - Task progress counter
-  - **Pause All** button (Forge orange, always visible)
-
-**Required Tests:**
-- All routes render correct views
-- Pause All button is always visible
-- Elapsed time updates every second
-
----
+#### 2.1 Create App Shell and Routing (Completed 2026-02-09)
+- Set up React Router with routes for all main views
+- Implemented persistent TopBar and Layout components
+- Added "Pause All" button and status indicators
+- Created placeholder views for Dashboard, Captain, Tasks, Refinery, Artifacts, Changes
+- Added comprehensive tests for routing and shell components
 
 #### 2.2 Implement Status LED Component
 **Complexity:** Small  
@@ -483,4 +468,4 @@ VITE_API_URL=http://localhost:3001
 
 ---
 
-*When all tasks are complete, add "ALL TASKS COMPLETE" to signal the loop to stop.*
+*When every task is finished, add a standalone line containing exactly `ALL TASKS COMPLETE` (nothing else on that line) to signal the loop to stop.*

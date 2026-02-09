@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { ForgeClient, ForgeAPIError } from '../api';
 
 global.fetch = vi.fn();
@@ -13,7 +13,7 @@ describe('ForgeClient', () => {
 
   it('createRun makes a POST request', async () => {
     const mockResponse = { runId: 'run-1', status: 'pending' };
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: true,
       json: async () => mockResponse,
     });
@@ -32,7 +32,7 @@ describe('ForgeClient', () => {
 
   it('getRun makes a GET request', async () => {
     const mockResponse = { runId: 'run-1', status: 'pending' };
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: true,
       json: async () => mockResponse,
     });
@@ -47,7 +47,7 @@ describe('ForgeClient', () => {
   });
 
   it('throws ForgeAPIError on non-ok response', async () => {
-    (global.fetch as any).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: false,
       status: 404,
       statusText: 'Not Found',

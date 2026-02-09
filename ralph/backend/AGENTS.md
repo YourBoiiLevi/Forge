@@ -57,7 +57,7 @@ npm run test:integration
 
 *Ralph will document codebase patterns discovered during development:*
 
-- API route structure: TBD
+- API route structure: `src/backend/routes/api-v1.ts`, registered from `createApp()` in `src/backend/server.ts`
 - Artifact store: `src/backend/lib/artifact-store.ts` (defaults to repo-root `artifacts/`; override with `FORGE_ARTIFACTS_DIR`)
 - Database access: TBD
 - Authentication: TBD

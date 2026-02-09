@@ -1,20 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
-// import { PauseCircle, PlayCircle, Activity, GitBranch, Box, FileText, Database, ShieldAlert } from 'lucide-react';
+import { PauseCircle, Activity, GitBranch, Box, FileText, ShieldAlert } from 'lucide-react';
 import { Button } from './ui/Button';
 import { StatusLED } from './ui/StatusLED';
 import { useState, useEffect } from 'react';
-
-// Temporary mock icons to debug rendering issue
-const IconMock = () => <span />;
-const PauseCircle = IconMock;
-const PlayCircle = IconMock;
-const Activity = IconMock;
-const GitBranch = IconMock;
-const Box = IconMock;
-const FileText = IconMock;
-const Database = IconMock;
-const ShieldAlert = IconMock;
-
 
 export function TopBar() {
   const [elapsed, setElapsed] = useState('00:00:00');
