@@ -19,16 +19,15 @@ const statusColors: Record<StatusType, string> = {
 
 export function StatusLED({ status, className, showLabel = false }: StatusLEDProps) {
   return (
-    <div className="flex items-center gap-2" role="status">
+    <div className={cn("flex items-center gap-2", className)} role="status">
       <div 
         className={cn(
           "w-1.5 h-1.5 rounded-full transition-all duration-300", 
-          statusColors[status],
-          className
+          statusColors[status]
         )}
-        aria-label={status}
+        aria-label={`Status: ${status}`}
       />
-      {showLabel && <span className="text-xs uppercase text-zinc-500">{status}</span>}
+      {showLabel && <span className="text-xs uppercase text-zinc-500 font-mono">{status}</span>}
     </div>
   );
 }
