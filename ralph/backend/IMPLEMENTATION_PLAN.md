@@ -376,6 +376,10 @@ artifacts/<runId>/
 **Complexity:** Medium  
 **Description:** Implement CR overlay merge logic for effective DAG computation.
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Added `src/backend/lib/dag/overlay.ts` with append-only overlay application (sorted by `appliedAt`, idempotent by `crId`), recomputed metadata totals, and merged-DAG validation; added unit tests.
+
 **Deliverables:**
 - `src/backend/lib/dag/overlay.ts` — Overlay application
 - Append-only semantics enforcement
