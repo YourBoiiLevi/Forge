@@ -2,10 +2,11 @@ import { cn } from '../../lib/utils';
 
 export type StatusType = 'pending' | 'running' | 'done' | 'failed' | 'merged' | 'stale';
 
-interface StatusLEDProps {
+export interface StatusLEDProps {
   status: StatusType;
   className?: string;
   showLabel?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const statusColors: Record<StatusType, string> = {
@@ -17,12 +18,19 @@ const statusColors: Record<StatusType, string> = {
   stale: 'bg-amber-600',
 };
 
-export function StatusLED({ status, className, showLabel = false }: StatusLEDProps) {
+const sizeClasses = {
+  sm: 'w-1.5 h-1.5',
+  md: 'w-2 h-2',
+  lg: 'w-3 h-3',
+};
+
+export function StatusLED({ status, className, showLabel = false, size = 'md' }: StatusLEDProps) {
   return (
     <div className={cn("flex items-center gap-2", className)} role="status">
       <div 
         className={cn(
-          "w-1.5 h-1.5 rounded-full transition-all duration-300", 
+          sizeClasses[size],
+          "rounded-full transition-all duration-300", 
           statusColors[status]
         )}
         aria-label={`Status: ${status}`}
