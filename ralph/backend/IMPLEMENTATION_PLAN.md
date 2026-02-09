@@ -117,6 +117,10 @@ Forge is an autonomous software engineering system with:
 **Complexity:** Medium  
 **Description:** Implement the centralized artifact store using just-bash for filesystem simulation. All artifacts stored at `artifacts/<runId>/`.
 
+**Status:** Completed (2026-02-09)
+
+**Notes:** Implemented an fs-backed `ArtifactStore` with atomic writes and traversal-safe path resolution. Schema validation (DAG/task/walkthrough frontmatter) will be enforced in the dedicated DAG/task parsing tasks.
+
 **Deliverables:**
 - `src/backend/lib/artifact-store.ts` — ArtifactStore class
 - Atomic write protocol (write → fsync → rename)
@@ -790,6 +794,7 @@ NODE_ENV=development                      # Environment
 ### 2026-02-09
 
 - **Task 1.1: Project Scaffolding and Configuration** — Added `src/backend/` Node+TypeScript project with ESLint, Prettier, Vitest, and required npm scripts; validators pass.
+- **Task 1.4: Artifact Store Implementation** — Added `src/backend/lib/artifact-store.ts` with atomic write protocol, run directory initialization, and read/write helpers; added unit tests.
 
 ---
 
