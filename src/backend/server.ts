@@ -3,6 +3,7 @@ import http from 'node:http';
 import express from 'express';
 
 import { ArtifactStore } from './lib/artifact-store';
+import { EventHub } from './lib/event-stream';
 import { HttpError } from './lib/http-error';
 import { corsForLocalhost } from './middleware/cors';
 import { errorHandler } from './middleware/error-handler';
@@ -18,11 +19,18 @@ export interface CreateAppOptions {
 
   /** Optional dependency injection for tests. */
   artifactStore?: ArtifactStore;
+
+  /** Optional dependency injection for tests. */
+  eventHub?: EventHub;
+
+  /** Override for keepalive interval on NDJSON streams (defaults to 15s). */
+  eventStreamKeepaliveMs?: number;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
   const app = express();
   const artifactStore = options.artifactStore ?? ArtifactStore.fromEnv();
+  const eventHub = options.eventHub ?? new EventHub();
 
   app.disable('x-powered-by');
 
@@ -34,7 +42,11 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
     res.status(200).json({ status: 'ok' });
   });
 
-  registerApiV1Routes(app, { artifactStore });
+  registerApiV1Routes(app, {
+    artifactStore,
+    eventHub,
+    eventStreamKeepaliveMs: options.eventStreamKeepaliveMs,
+  });
 
   options.registerRoutes?.(app);
 

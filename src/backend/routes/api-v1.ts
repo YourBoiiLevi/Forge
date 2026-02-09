@@ -4,6 +4,7 @@ import type { Express, NextFunction, Request, Response } from 'express';
 import express from 'express';
 
 import { ArtifactStore } from '../lib/artifact-store';
+import type { EventHub } from '../lib/event-stream';
 import { HttpError } from '../lib/http-error';
 import { newPlanningRunState, type RunState } from '../lib/run-state';
 
@@ -79,9 +80,19 @@ async function writeRunState(store: ArtifactStore, state: RunState): Promise<voi
   await store.writeRunState(state.runId, state);
 }
 
-export function registerApiV1Routes(app: Express, options: { artifactStore: ArtifactStore }): void {
+function parseAfterQuery(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  return undefined;
+}
+
+export function registerApiV1Routes(
+  app: Express,
+  options: { artifactStore: ArtifactStore; eventHub: EventHub; eventStreamKeepaliveMs?: number },
+): void {
   const router = express.Router();
   const store = options.artifactStore;
+  const eventHub = options.eventHub;
+  const keepaliveMs = options.eventStreamKeepaliveMs ?? 15_000;
 
   // --- Runs ---
 
@@ -95,10 +106,22 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
       const runId = newRunId();
       const state = newPlanningRunState({ runId, repoUrl, model, now: new Date() });
 
-      await store.ensureRunInitialized(runId);
-      await writeRunState(store, state);
+      const started = eventHub.emit({
+        runId,
+        type: 'run.started',
+        data: { repoUrl },
+      });
 
-      res.status(201).json({ runId, status: state.status });
+      const persisted: RunState = {
+        ...state,
+        lastEventId: started.eventId,
+        lastEventSeq: started.seq,
+      };
+
+      await store.ensureRunInitialized(runId);
+      await writeRunState(store, persisted);
+
+      res.status(201).json({ runId, status: persisted.status });
     }),
   );
 
@@ -138,8 +161,20 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
         currentPhase: 'paused',
       };
 
-      await writeRunState(store, next);
-      res.status(200).json({ status: next.status });
+      const evt = eventHub.emit({
+        runId,
+        type: 'run.paused',
+        data: { reason: 'user' },
+      });
+
+      const persisted: RunState = {
+        ...next,
+        lastEventId: evt.eventId,
+        lastEventSeq: evt.seq,
+      };
+
+      await writeRunState(store, persisted);
+      res.status(200).json({ status: persisted.status });
     }),
   );
 
@@ -166,6 +201,53 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
 
       await writeRunState(store, next);
       res.status(200).json({ status: next.status });
+    }),
+  );
+
+  router.get(
+    '/runs/:runId/stream',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+
+      // Validate run exists before switching to streaming mode.
+      await readRunStateOrThrow(store, runId);
+
+      res.status(200);
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.setHeader('Transfer-Encoding', 'chunked');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
+
+      // Avoid server-side timeouts on long-lived connections.
+      req.socket.setTimeout(0);
+      res.socket?.setTimeout(0);
+
+      // Ensure headers are sent immediately (where supported).
+      res.flushHeaders?.();
+
+      const afterEventId = parseAfterQuery((req.query as Record<string, unknown>).after);
+
+      // Replay buffered events if resuming.
+      const replay = eventHub.getAfter(runId, afterEventId);
+      for (const event of replay) {
+        res.write(`${JSON.stringify(event)}\n`);
+      }
+
+      // Subscribe to live events.
+      const unsubscribe = eventHub.subscribe(runId, (event) => {
+        res.write(`${JSON.stringify(event)}\n`);
+      });
+
+      // Keepalive comments to prevent proxy timeouts.
+      const keepalive = setInterval(() => {
+        res.write(': keepalive\n');
+      }, keepaliveMs);
+
+      req.on('close', () => {
+        unsubscribe();
+        clearInterval(keepalive);
+      });
     }),
   );
 

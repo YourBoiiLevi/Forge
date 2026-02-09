@@ -213,6 +213,8 @@ artifacts/<runId>/
 **Complexity:** Medium  
 **Description:** Implement the event streaming endpoint with replay support.
 
+**Status:** Completed (2026-02-09)
+
 **Endpoint:** `GET /api/v1/runs/:runId/stream`
 
 **Deliverables:**
@@ -725,7 +727,7 @@ artifacts/<runId>/
 |----------|--------|-------------|--------|
 | `/api/v1/runs` | POST | Create new run | Completed (2026-02-09) |
 | `/api/v1/runs/:runId` | GET | Get run state | Completed (2026-02-09) |
-| `/api/v1/runs/:runId/stream` | GET | NDJSON event stream | Not Started |
+| `/api/v1/runs/:runId/stream` | GET | NDJSON event stream | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/pause` | POST | Pause run | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/resume` | POST | Resume run | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/tasks` | GET | List tasks | Not Started |
@@ -801,6 +803,7 @@ NODE_ENV=development                      # Environment
 - **Task 1.4: Artifact Store Implementation** — Added `src/backend/lib/artifact-store.ts` with atomic write protocol, run directory initialization, and read/write helpers; added unit tests.
 - **Task 2.1: Express.js Server Setup** — Added `src/backend/server.ts` with Express bootstrap, localhost-only CORS middleware, request logging, standard error envelope middleware, and `/health` endpoint; added unit tests.
 - **Task 2.2: REST API Endpoints - Runs** — Added `/api/v1/runs` create+get+pause+resume endpoints backed by the artifact store (`run-state.json`) with request validation, standard error envelope, and unit tests.
+- **Task 2.3: NDJSON Event Stream Implementation** — Added `/api/v1/runs/:runId/stream` NDJSON endpoint with in-memory per-run circular buffering, `?after=` replay, and keepalive comments; added unit tests.
 
 ---
 

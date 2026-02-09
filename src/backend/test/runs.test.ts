@@ -82,8 +82,8 @@ describe('runs API (Task 2.2)', () => {
       failedTasks: 0,
       runningTasks: 0,
       activeCRs: [],
-      lastEventId: '',
-      lastEventSeq: 0,
+      lastEventId: expect.stringMatching(/^evt_/),
+      lastEventSeq: 1,
     });
     expect(state.createdAt).toEqual(expect.any(String));
     expect(state.model).toEqual(expect.any(String));
