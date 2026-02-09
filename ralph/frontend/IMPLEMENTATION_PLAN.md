@@ -134,40 +134,14 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Integrated mock plan generation and approval flow.
 - Added comprehensive unit tests for all chat components and interactions.
 
-#### 3.3 Implement Task Detail View
-**Complexity:** Large  
-**Dependencies:** 2.1, 2.2, 1.4
-**Complexity:** Large  
-**Dependencies:** 2.1, 2.2, 1.4
-
-Detailed view for a single task.
-
-**Acceptance Criteria:**
-- Header with task metadata (status, ID, title, type, deps, branch, agent)
-- Agent output stream:
-  - Real-time character-by-character streaming
-  - Thinking blocks styled differently (gray border)
-  - Auto-scroll with scroll lock
-  - Virtual scrolling for long outputs
-- Tool call history sidebar:
-  - Chronological list of all tool calls
-  - Collapsible entries
-  - Shows args, result, duration
-  - Error calls highlighted red
-- Walkthrough section (after completion):
-  - Rendered markdown
-  - YAML frontmatter fields as structured header
-- Files changed list
-- Test results summary (if tests run)
-- Risks and Followups sections
-
-**Required Tests:**
-- Output streams in real-time
-- Virtual scrolling works for 10,000+ lines
-- Tool history is chronological
-- Walkthrough renders after completion
-
----
+#### 3.3 Implement Task Detail View (Completed 2026-02-10)
+- Implemented `TaskDetailView` with real-time streaming updates.
+- Created `TaskHeader` with metadata, status LED, and dependency links.
+- Implemented `AgentOutputStream` with auto-scroll and lock.
+- Created `ToolHistorySidebar` with collapsible tool calls (args, results, duration).
+- Implemented `WalkthroughViewer` for completed tasks (frontmatter, risks, file changes).
+- Integrated `useEventStream` for live updates via NDJSON.
+- Added comprehensive unit tests for all components.
 
 #### 3.4 Implement Refinery View
 **Complexity:** Medium  

@@ -24,6 +24,15 @@ vi.mock('lucide-react', () => {
     ShieldAlert: IconMock,
     CirclePause: IconMock, // In case of older/newer version naming
     Loader2: IconMock, // Used in Button
+    Copy: IconMock,
+    ArrowLeft: IconMock,
+    ChevronRight: IconMock,
+    ChevronDown: IconMock,
+    Clock: IconMock,
+    Terminal: IconMock,
+    AlertCircle: IconMock,
+    AlertTriangle: IconMock,
+    CheckCircle: IconMock,
     
     // Fallback for others using Proxy
     // Note: Vitest's vi.mock factory must return the module object directly, 
