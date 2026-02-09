@@ -59,6 +59,7 @@ npm run test:integration
 
 - API route structure: `src/backend/routes/api-v1.ts`, registered from `createApp()` in `src/backend/server.ts`
 - Artifact store: `src/backend/lib/artifact-store.ts` (defaults to repo-root `artifacts/`; override with `FORGE_ARTIFACTS_DIR`)
+- DAG utilities: `src/backend/lib/dag/{types,validation,status}.ts` (types, cycle/dangling-dep validation, topo sort, status transitions)
 - Database access: TBD
 - Authentication: TBD
 - Error handling: TBD

@@ -326,6 +326,8 @@ artifacts/<runId>/
 **Complexity:** Medium  
 **Description:** Implement DAG data structures, validation, and status tracking.
 
+**Status:** Completed (2026-02-10)
+
 **Deliverables:**
 - `src/backend/lib/dag/types.ts` — TypeScript interfaces for DAG, DAGNode
 - `src/backend/lib/dag/validation.ts` — Acyclicity check, dangling reference detection
@@ -821,6 +823,7 @@ NODE_ENV=development                      # Environment
 - **Task 2.5: REST API Endpoints - Artifacts** — Added `/api/v1/runs/:runId/artifacts/:path` endpoint with traversal-safe run-scoped path resolution, basic Content-Type detection, and unit tests.
 - **Task 2.6: REST API Endpoints - Change Requests** — Added `/api/v1/runs/:runId/change-requests` listing and `/api/v1/runs/:runId/change-requests/:crId/approve` approval endpoints backed by `change-request.md` frontmatter; added unit tests.
 - **Task 2.7: Captain Messaging Endpoint** — Added `/api/v1/captain/message` endpoint with validation, 202 acknowledgements, 409 state gating, and NDJSON stream event emission; added unit tests.
+- **Task 3.1: DAG Schema Implementation** — Added `src/backend/lib/dag/{types,validation,status}.ts` with DAG types, cycle/dangling-dependency validation, topological sort, and status transition enforcement; added unit tests.
 
 ---
 
