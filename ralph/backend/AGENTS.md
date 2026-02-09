@@ -5,16 +5,19 @@ Operational guide for Ralph backend development loop. Keep this brief and focuse
 ## Build & Run
 
 ```bash
+# All backend commands run from the backend package directory
+cd src/backend
+
 # Install dependencies
 npm install
 
-# Development server with hot reload
+# Development runner (currently a placeholder entrypoint)
 npm run dev
 
 # Production build
 npm run build
 
-# Start production server
+# Start production runner
 npm run start
 ```
 
@@ -23,6 +26,8 @@ npm run start
 Run these after implementing to get immediate feedback:
 
 ```bash
+cd src/backend
+
 # Type checking
 npm run typecheck
 
@@ -45,17 +50,7 @@ npm run test:integration
 ## Database
 
 ```bash
-# Run migrations
-npm run db:migrate
-
-# Rollback last migration
-npm run db:rollback
-
-# Seed database
-npm run db:seed
-
-# Reset database (drop, create, migrate, seed)
-npm run db:reset
+# Not implemented yet (MVP backend uses filesystem artifacts; no DB required).
 ```
 
 ## Patterns
