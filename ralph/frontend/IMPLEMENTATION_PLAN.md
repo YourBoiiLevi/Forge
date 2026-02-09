@@ -70,6 +70,20 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Added comprehensive unit tests
 - Fixed accessibility and labeling issues
 
+#### 2.3 Create DAG Visualization Component (Completed 2026-02-09)
+- Implemented `DAGGraph` and `TaskNode` components using @xyflow/react
+- Integrated `dagre` for automatic graph layout
+- Added strict type safety matching spec schemas
+- Implemented comprehensive unit tests for graph rendering and interaction
+- Ensured responsiveness and status-based styling
+
+#### 2.4 Create Task List Component (Completed 2026-02-10)
+- Implemented sortable/filterable task list table
+- Added status filtering and search functionality
+- Implemented click navigation to task detail
+- Added comprehensive unit tests for sorting, filtering, and interaction
+- Ensured type safety and accessibility
+
 ### Phase 2: Core Components
 
 #### 2.1 Create App Shell and Routing (Completed 2026-02-09)
@@ -94,58 +108,12 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 
 ---
 
-#### 2.3 Create DAG Visualization Component
-**Complexity:** Large  
-**Dependencies:** 1.2, 2.2
-
-Implement the directed acyclic graph visualization for task dependencies.
-
-**Acceptance Criteria:**
-- DAG component renders nodes and edges from `dag.json` schema
-- Node styling per status (colors from spec)
-- Edges: 1px lines in `--border` color
-- Selected task edges highlight in `--accent`
-- Nodes are clickable (navigate to Task Detail View)
-- Real-time updates as task statuses change
-- Performance: handles 100+ nodes smoothly
-- Pan/zoom controls for large graphs
-
-**Required Tests:**
-- Renders graph with correct node positions
-- Node colors match status
-- Clicking node triggers navigation
-- Status changes update visualization
-
----
-
-#### 2.4 Create Task List Component
-**Complexity:** Medium  
-**Dependencies:** 1.2, 2.2
-
-Implement sortable/filterable task list table.
-
-**Acceptance Criteria:**
-- Monospace table with columns:
-  - Status (LED)
-  - ID
-  - Title
-  - Type
-  - Agent
-  - Branch
-  - Dependencies count
-- All columns sortable
-- Filter by status (dropdown)
-- Search by title
-- Row click navigates to Task Detail View
-- Active filters shown as dismissible pills
-
-**Required Tests:**
-- Sorting works for all columns
-- Filter reduces displayed rows
-- Search filters by title text
-- Navigation works on row click
-
----
+#### 2.4 Create Task List Component (Completed 2026-02-10)
+- Implemented sortable/filterable task list table
+- Added status filtering and search functionality
+- Implemented click navigation to task detail
+- Added comprehensive unit tests for sorting, filtering, and interaction
+- Ensured type safety and accessibility
 
 ### Phase 3: Main Views
 
