@@ -66,6 +66,10 @@ Forge is an autonomous software engineering system with:
 **Complexity:** Medium  
 **Description:** Fork `@mariozechner/pi-ai` from badlogic/pi-mono as `forge-ai`. Keep everything — unified LLM API, model registry, streaming, tools, cost tracking.
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Vendored the published ESM `dist/` output from `@mariozechner/pi-ai` into a workspace package at `src/backend/packages/forge-ai/` to preserve behavior; added backend tests for model registry, tool validation, and OpenAI/Anthropic stream event parsing via SDK mocks.
+
 **Deliverables:**
 - `src/backend/packages/forge-ai/` with complete pi-ai fork
 - Renamed exports and package.json
@@ -843,6 +847,7 @@ NODE_ENV=development                      # Environment
 - **Task 3.2: Task Markdown Parser** — Added `src/backend/lib/task-parser.ts` to parse task markdown YAML frontmatter + body with schema validation and clear errors; added unit tests.
 - **Task 5.1: E2B Sandbox Manager** — Added `src/backend/lib/sandbox/manager.ts` implementing E2B sandbox lifecycle management (create/connect/pause/kill), metadata tracking, and env injection; added unit tests with a fake sandbox implementation.
 - **Task 5.2: Git Operations in Sandbox** — Added `src/backend/lib/sandbox/git.ts` implementing clone/checkout/fetch+merge/commit/push with Forge branch naming, structured commit messages, and exponential backoff for remote operations; added unit tests.
+- **Task 1.2: Fork and Integrate forge-ai (from pi-ai)** — Added `src/backend/packages/forge-ai/` as a workspace package vendoring the upstream `@mariozechner/pi-ai` ESM build output and renamed package metadata/exports; added tests for model registry, tool validation, and OpenAI/Anthropic streaming event parsing (SDK mocked).
 
 ---
 

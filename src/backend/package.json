@@ -5,6 +5,9 @@
   "description": "Forge backend (Ralph-built)",
   "license": "UNLICENSED",
   "main": "dist/index.js",
+	"workspaces": [
+		"packages/*"
+	],
   "scripts": {
     "dev": "tsx watch ./index.ts",
     "build": "tsc -p tsconfig.json",
@@ -20,6 +23,7 @@
     "@e2b/code-interpreter": "latest",
     "@sinclair/typebox": "^0.32.0",
     "ajv": "^8.12.0",
+    "forge-ai": "workspace:*",
     "express": "^4.18.2"
   },
   "devDependencies": {
