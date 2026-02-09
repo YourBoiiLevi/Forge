@@ -117,33 +117,15 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 
 ### Phase 3: Main Views
 
-#### 3.1 Implement Dashboard/Run View
-**Complexity:** Large  
-**Dependencies:** 2.1, 2.3, 2.4, 1.4
+#### 3.1 Implement Dashboard/Run View (Completed 2026-02-10)
+- Implemented `DashboardView` with grid layout
+- Integrated `DAGGraph`, `TaskList`, `ActiveAgentsPanel`, and `EventsFeed`
+- Created `EventsFeed` component with auto-scroll and filtering
+- Created `ActiveAgentsPanel` with simulated agent logs
+- Ensured responsiveness and mocked data integration
+- Verified with comprehensive unit tests
 
-The primary operational view showing DAG, task list, and active agents.
-
-**Acceptance Criteria:**
-- Layout: DAG panel + Task List + Active Agents Panel + Events Feed
-- Active Agents Panel shows running agents with:
-  - Status LED
-  - Agent ID
-  - Task name
-  - Elapsed time
-  - Last 2-3 lines of output (streaming)
-- Events Feed: scrolling NDJSON events styled as terminal log
-  - Auto-scroll unless user scrolled up
-  - Filterable by event type
-  - Max 500 rendered events
-- Responsive layout
-
-**Required Tests:**
-- All panels render with data
-- Agent output streams in real-time
-- Events auto-scroll works
-- Scroll lock on user scroll
-
----
+### Phase 3: Main Views
 
 #### 3.2 Implement Captain Interview View
 **Complexity:** Large  

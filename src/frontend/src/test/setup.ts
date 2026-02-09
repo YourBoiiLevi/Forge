@@ -32,4 +32,18 @@ vi.mock('lucide-react', () => {
   };
 });
 
+// Mock ResizeObserver for React Flow
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+// Mock TextDecoder/TextEncoder for JSDOM env if missing (often needed for libs)
+if (typeof global.TextEncoder === 'undefined') {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}
+
 

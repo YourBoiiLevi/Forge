@@ -12,15 +12,10 @@ import {
 import '@xyflow/react/dist/style.css';
 import { TaskNode } from './TaskNode';
 import { getLayoutedElements, DAGNodeData } from '../../lib/dag-utils';
+import { Task } from '../../lib/types';
 
 interface DAGGraphProps {
-  tasks: Array<{
-    id: string;
-    title: string;
-    status: string;
-    type: string;
-    dependencies: string[];
-  }>;
+  tasks: Task[];
   onTaskSelect?: (taskId: string) => void;
   className?: string;
 }
@@ -33,10 +28,10 @@ export const DAGGraph: React.FC<DAGGraphProps> = ({ tasks, onTaskSelect, classNa
   // Convert tasks to React Flow nodes and edges
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() => {
     const nodes: Node<DAGNodeData>[] = tasks.map((task) => ({
-      id: task.id,
+      id: task.taskId,
       type: 'task',
       data: {
-        id: task.id,
+        id: task.taskId,
         label: task.title,
         status: task.status as DAGNodeData['status'],
         type: task.type,
@@ -46,9 +41,9 @@ export const DAGGraph: React.FC<DAGGraphProps> = ({ tasks, onTaskSelect, classNa
 
     const edges: Edge[] = tasks.flatMap((task) =>
       task.dependencies.map((depId) => ({
-        id: `${depId}-${task.id}`,
+        id: `${depId}-${task.taskId}`,
         source: depId,
-        target: task.id,
+        target: task.taskId,
         type: 'default',
         animated: false,
         style: { stroke: 'var(--border)', strokeWidth: 1 },
