@@ -1,4 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import type { Dirent } from 'node:fs';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 
 import type { Express, NextFunction, Request, Response } from 'express';
 import express from 'express';
@@ -6,6 +9,7 @@ import express from 'express';
 import { ArtifactStore } from '../lib/artifact-store';
 import type { EventHub } from '../lib/event-stream';
 import { HttpError } from '../lib/http-error';
+import { parseTaskArtifactFrontmatter, type TaskStatus, type TaskType } from '../lib/task-artifact';
 import { newPlanningRunState, type RunState } from '../lib/run-state';
 
 function isErrno(err: unknown): err is NodeJS.ErrnoException {
@@ -27,6 +31,17 @@ function assertNonEmptyString(value: unknown, label: string): string {
   const trimmed = value.trim();
   if (!trimmed) {
     throw new HttpError(400, 'INVALID_REQUEST', `${label} must not be empty`);
+  }
+  return trimmed;
+}
+
+function assertPathSegmentOrNotFound(value: string, label: string, notFoundCode: string): string {
+  const trimmed = value.trim();
+  if (!trimmed || trimmed !== value) {
+    throw new HttpError(404, notFoundCode, 'Not found', { [label]: value });
+  }
+  if (trimmed.includes('/') || trimmed.includes('\\') || trimmed === '.' || trimmed === '..') {
+    throw new HttpError(404, notFoundCode, 'Not found', { [label]: value });
   }
   return trimmed;
 }
@@ -83,6 +98,33 @@ async function writeRunState(store: ArtifactStore, state: RunState): Promise<voi
 function parseAfterQuery(value: unknown): string | undefined {
   if (typeof value === 'string') return value;
   return undefined;
+}
+
+type DagStatus = {
+  runId: string;
+  updatedAt: string;
+  nodes: Record<
+    string,
+    {
+      taskId: string;
+      status: TaskStatus;
+      currentAttempt: number;
+      maxAttempts: number;
+      assignedAgent?: string;
+      startedAt?: string;
+      completedAt?: string;
+      lastError?: string;
+    }
+  >;
+};
+
+async function readDagStatusOrUndefined(store: ArtifactStore, runId: string): Promise<DagStatus | undefined> {
+  try {
+    return await store.readDagStatus<DagStatus>(runId);
+  } catch (err) {
+    if (isErrno(err) && err.code === 'ENOENT') return undefined;
+    throw err;
+  }
 }
 
 export function registerApiV1Routes(
@@ -248,6 +290,147 @@ export function registerApiV1Routes(
         unsubscribe();
         clearInterval(keepalive);
       });
+    }),
+  );
+
+  // --- Tasks ---
+
+  router.get(
+    '/runs/:runId/tasks',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+      await readRunStateOrThrow(store, runId);
+
+      const dagStatus = await readDagStatusOrUndefined(store, runId);
+
+      const tasksDir = store.resolveRunArtifactPath(runId, 'tasks');
+      let entries: Dirent[];
+      try {
+        entries = await fs.readdir(tasksDir, { withFileTypes: true });
+      } catch (err) {
+        if (isErrno(err) && err.code === 'ENOENT') {
+          // Run exists (validated above) but tasks/ may not yet be populated.
+          res.status(200).json([]);
+          return;
+        }
+        throw err;
+      }
+
+      const summaries = await Promise.all(
+        entries
+          .filter((e) => e.isFile() && e.name.endsWith('.md'))
+          .map(async (e) => {
+            const taskId = path.basename(e.name, '.md');
+            const md = await fs.readFile(path.join(tasksDir, e.name), 'utf8');
+
+            let fm;
+            try {
+              fm = parseTaskArtifactFrontmatter(md);
+            } catch {
+              throw new HttpError(500, 'INTERNAL_ERROR', 'Failed to load tasks');
+            }
+
+            const status = dagStatus?.nodes?.[taskId]?.status ?? 'PENDING';
+
+            const out: {
+              taskId: string;
+              title: string;
+              type: TaskType;
+              status: TaskStatus;
+              dependencies: string[];
+              branch?: string;
+            } = {
+              taskId,
+              title: fm.title,
+              type: fm.type,
+              status,
+              dependencies: fm.dependencies,
+            };
+
+            if (typeof fm.branch === 'string' && fm.branch.trim()) {
+              out.branch = fm.branch;
+            }
+
+            return out;
+          }),
+      );
+
+      summaries.sort((a, b) => a.taskId.localeCompare(b.taskId));
+      res.status(200).json(summaries);
+    }),
+  );
+
+  router.get(
+    '/runs/:runId/tasks/:taskId',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+      const taskId = assertPathSegmentOrNotFound(req.params.taskId, 'taskId', 'TASK_NOT_FOUND');
+
+      await readRunStateOrThrow(store, runId);
+
+      const taskPath = `tasks/${taskId}.md`;
+      let md: string;
+      try {
+        md = await store.readText(runId, taskPath);
+      } catch (err) {
+        if (isErrno(err) && err.code === 'ENOENT') {
+          throw new HttpError(404, 'TASK_NOT_FOUND', 'Task not found', { runId, taskId });
+        }
+        throw err;
+      }
+
+      let fm;
+      try {
+        fm = parseTaskArtifactFrontmatter(md);
+      } catch {
+        throw new HttpError(500, 'INTERNAL_ERROR', 'Failed to load task', { runId, taskId });
+      }
+
+      const dagStatus = await readDagStatusOrUndefined(store, runId);
+      const node = dagStatus?.nodes?.[taskId];
+      const status = node?.status ?? 'PENDING';
+
+      const artifacts: string[] = [taskPath];
+      let walkthrough: string | undefined;
+
+      if (typeof fm.attemptId === 'string' && fm.attemptId.trim()) {
+        const attemptId = assertPathSegmentOrNotFound(fm.attemptId, 'attemptId', 'TASK_NOT_FOUND');
+        const walkthroughRel = `${taskId}/${attemptId}/walkthrough.md`;
+        const exists = await store.exists(runId, walkthroughRel);
+        if (exists) {
+          walkthrough = await store.readText(runId, walkthroughRel);
+          artifacts.push(walkthroughRel);
+        }
+      }
+
+      const out: {
+        taskId: string;
+        title: string;
+        type: TaskType;
+        status: TaskStatus;
+        dependencies: string[];
+        branch?: string;
+        startedAt?: string;
+        completedAt?: string;
+        walkthrough?: string;
+        artifacts: string[];
+      } = {
+        taskId,
+        title: fm.title,
+        type: fm.type,
+        status,
+        dependencies: fm.dependencies,
+        artifacts,
+      };
+
+      if (typeof fm.branch === 'string' && fm.branch.trim()) {
+        out.branch = fm.branch;
+      }
+      if (node?.startedAt) out.startedAt = node.startedAt;
+      if (node?.completedAt) out.completedAt = node.completedAt;
+      if (walkthrough !== undefined) out.walkthrough = walkthrough;
+
+      res.status(200).json(out);
     }),
   );
 

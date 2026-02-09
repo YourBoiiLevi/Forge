@@ -243,6 +243,8 @@ artifacts/<runId>/
 **Complexity:** Small  
 **Description:** Implement task listing and detail endpoints.
 
+**Status:** Completed (2026-02-09)
+
 **Endpoints:**
 | Method | Path | Description |
 |--------|------|-------------|
@@ -730,8 +732,8 @@ artifacts/<runId>/
 | `/api/v1/runs/:runId/stream` | GET | NDJSON event stream | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/pause` | POST | Pause run | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/resume` | POST | Resume run | Completed (2026-02-09) |
-| `/api/v1/runs/:runId/tasks` | GET | List tasks | Not Started |
-| `/api/v1/runs/:runId/tasks/:taskId` | GET | Get task detail | Not Started |
+| `/api/v1/runs/:runId/tasks` | GET | List tasks | Completed (2026-02-09) |
+| `/api/v1/runs/:runId/tasks/:taskId` | GET | Get task detail | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/artifacts/:path` | GET | Get artifact | Not Started |
 | `/api/v1/runs/:runId/change-requests` | GET | List CRs | Not Started |
 | `/api/v1/runs/:runId/change-requests/:crId/approve` | POST | Approve CR | Not Started |
@@ -804,6 +806,7 @@ NODE_ENV=development                      # Environment
 - **Task 2.1: Express.js Server Setup** — Added `src/backend/server.ts` with Express bootstrap, localhost-only CORS middleware, request logging, standard error envelope middleware, and `/health` endpoint; added unit tests.
 - **Task 2.2: REST API Endpoints - Runs** — Added `/api/v1/runs` create+get+pause+resume endpoints backed by the artifact store (`run-state.json`) with request validation, standard error envelope, and unit tests.
 - **Task 2.3: NDJSON Event Stream Implementation** — Added `/api/v1/runs/:runId/stream` NDJSON endpoint with in-memory per-run circular buffering, `?after=` replay, and keepalive comments; added unit tests.
+- **Task 2.4: REST API Endpoints - Tasks** — Added `/api/v1/runs/:runId/tasks` and `/api/v1/runs/:runId/tasks/:taskId` backed by `artifacts/<runId>/tasks/*.md` plus `dag-status.json` with optional walkthrough inclusion; added unit tests.
 
 ---
 
