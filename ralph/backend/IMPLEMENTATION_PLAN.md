@@ -13,7 +13,7 @@
 
 ## Summary
 
-The backend is a **greenfield project** — the `src/backend/` directory is currently empty. This plan outlines a phased approach to building the complete Forge backend system based on the 12 specification documents.
+The backend is a **greenfield project** — with initial scaffolding and the artifact store already implemented. This plan outlines a phased approach to building the complete Forge backend system based on the 12 specification documents.
 
 ### System Architecture Overview
 Forge is an autonomous software engineering system with:
@@ -161,6 +161,8 @@ artifacts/<runId>/
 #### Task 2.1: Express.js Server Setup
 **Complexity:** Small  
 **Description:** Set up Express.js server with middleware, error handling, and CORS configuration for localhost.
+
+**Status:** Completed (2026-02-09)
 
 **Deliverables:**
 - `src/backend/server.ts` — Main entry point
@@ -795,6 +797,7 @@ NODE_ENV=development                      # Environment
 
 - **Task 1.1: Project Scaffolding and Configuration** — Added `src/backend/` Node+TypeScript project with ESLint, Prettier, Vitest, and required npm scripts; validators pass.
 - **Task 1.4: Artifact Store Implementation** — Added `src/backend/lib/artifact-store.ts` with atomic write protocol, run directory initialization, and read/write helpers; added unit tests.
+- **Task 2.1: Express.js Server Setup** — Added `src/backend/server.ts` with Express bootstrap, localhost-only CORS middleware, request logging, standard error envelope middleware, and `/health` endpoint; added unit tests.
 
 ---
 
@@ -822,4 +825,4 @@ NODE_ENV=development                      # Environment
 
 ---
 
-*When all tasks are complete, add "ALL TASKS COMPLETE" to signal the loop to stop.*
+*When every task is finished, add a standalone line containing exactly `ALL TASKS COMPLETE` (nothing else on that line) to signal the loop to stop.*
