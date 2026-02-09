@@ -347,6 +347,49 @@ export function registerApiV1Routes(
     }),
   );
 
+  // --- Captain ---
+
+  router.post(
+    '/captain/message',
+    asyncHandler(async (req: Request, res: Response) => {
+      const body = (req.body ?? {}) as Record<string, unknown>;
+      const runId = assertNonEmptyString(body.runId, 'runId');
+      const message = assertNonEmptyString(body.message, 'message');
+
+      const state = await readRunStateOrThrow(store, runId);
+
+      if (state.status !== 'planning' || state.currentPhase !== 'captain_interview') {
+        throw new HttpError(409, 'INVALID_STATE', 'Run is not in the captain interview phase', {
+          runId,
+          status: state.status,
+          phase: state.currentPhase,
+        });
+      }
+
+      // Emit the user message so the UI/SDK can render the chat transcript.
+      eventHub.emit({
+        runId,
+        type: 'captain.message',
+        data: { content: message, role: 'user' },
+      });
+
+      // MVP placeholder until the Captain agent is implemented.
+      const reply = eventHub.emit({
+        runId,
+        type: 'captain.message',
+        data: { content: 'Message received.', role: 'assistant' },
+      });
+
+      await writeRunState(store, {
+        ...state,
+        lastEventId: reply.eventId,
+        lastEventSeq: reply.seq,
+      });
+
+      res.status(202).json({ acknowledged: true });
+    }),
+  );
+
   // --- Tasks ---
 
   router.get(

@@ -314,6 +314,10 @@ artifacts/<runId>/
 - 409 if run not in planning phase
 - Events emitted on stream
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Implemented `/api/v1/captain/message` with request validation and a minimal placeholder reply. The endpoint emits `captain.message` events (user + assistant) to the NDJSON stream and updates the persisted `run-state.json` lastEvent fields.
+
 ---
 
 ### Phase 3: DAG & Task Management (Priority: High)
@@ -741,7 +745,7 @@ artifacts/<runId>/
 | `/api/v1/runs/:runId/artifacts/:path` | GET | Get artifact | Completed (2026-02-10) |
 | `/api/v1/runs/:runId/change-requests` | GET | List CRs | Completed (2026-02-10) |
 | `/api/v1/runs/:runId/change-requests/:crId/approve` | POST | Approve CR | Completed (2026-02-10) |
-| `/api/v1/captain/message` | POST | Send message to Captain | Not Started |
+| `/api/v1/captain/message` | POST | Send message to Captain | Completed (2026-02-10) |
 
 ---
 
@@ -816,6 +820,7 @@ NODE_ENV=development                      # Environment
 
 - **Task 2.5: REST API Endpoints - Artifacts** — Added `/api/v1/runs/:runId/artifacts/:path` endpoint with traversal-safe run-scoped path resolution, basic Content-Type detection, and unit tests.
 - **Task 2.6: REST API Endpoints - Change Requests** — Added `/api/v1/runs/:runId/change-requests` listing and `/api/v1/runs/:runId/change-requests/:crId/approve` approval endpoints backed by `change-request.md` frontmatter; added unit tests.
+- **Task 2.7: Captain Messaging Endpoint** — Added `/api/v1/captain/message` endpoint with validation, 202 acknowledgements, 409 state gating, and NDJSON stream event emission; added unit tests.
 
 ---
 
