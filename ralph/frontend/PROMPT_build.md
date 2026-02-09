@@ -27,7 +27,7 @@ Analyze relevant spec files for the task you'll implement:
 ```
 curl --request POST \
   --url https://api.firecrawl.dev/v2/search \
-  --header 'Authorization: Bearer ${FIRECRAWL_API_KEY}' \
+  --header 'Authorization: Bearer fc-72735e9d8eda47fb94b1f4d002187c04' \
   --header 'Content-Type: application/json' \
   --data '{
     "query": "Query",
@@ -50,7 +50,7 @@ curl --request POST \
 ```
 curl --request POST \
   --url https://api.firecrawl.dev/v2/scrape \
-  --header 'Authorization: Bearer ${FIRECRAWL_API_KEY}' \
+  --header 'Authorization: Bearer fc-72735e9d8eda47fb94b1f4d002187c04' \
   --header 'Content-Type: application/json' \
   --data '{
     "url": "https://cursor.com/blog/self-driving-codebases",

@@ -17,7 +17,7 @@ describe('App Routing', () => {
   it('renders captain view on /captain route', () => {
     window.history.pushState({}, 'Test page', '/captain/current');
     render(<App />);
-    expect(screen.getByText('Captain Interview View Placeholder')).toBeInTheDocument();
+    expect(screen.getByText('Captain Interface')).toBeInTheDocument();
   });
 
   it('renders artifacts view on /artifacts route', () => {

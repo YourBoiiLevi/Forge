@@ -180,7 +180,7 @@ while true; do
     
     # Check if plan indicates completion
     if [ -f "$SCRIPT_DIR/IMPLEMENTATION_PLAN.md" ]; then
-        if grep -q "ALL TASKS COMPLETE" "$SCRIPT_DIR/IMPLEMENTATION_PLAN.md" 2>/dev/null; then
+        if grep -qx "ALL TASKS COMPLETE" "$SCRIPT_DIR/IMPLEMENTATION_PLAN.md" 2>/dev/null; then
             echo ""
             echo "Implementation plan indicates all tasks complete!"
             update_state "completed" "All tasks marked complete in implementation plan"

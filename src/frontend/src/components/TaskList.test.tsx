@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TaskList } from './TaskList';
-import { Task } from '../../lib/types';
+import { Task } from '../lib/types';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 

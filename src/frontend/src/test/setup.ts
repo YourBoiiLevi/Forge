@@ -41,9 +41,13 @@ global.ResizeObserver = class ResizeObserver {
 
 // Mock TextDecoder/TextEncoder for JSDOM env if missing (often needed for libs)
 if (typeof global.TextEncoder === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { TextEncoder, TextDecoder } = require('util');
   global.TextEncoder = TextEncoder;
-  global.TextDecoder = TextDecoder;
+  global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 }
+
+// Mock scrollIntoView for JSDOM
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 

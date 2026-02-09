@@ -8,8 +8,10 @@ vi.mock('@xyflow/react', async () => {
   const actual = await vi.importActual('@xyflow/react');
   return {
     ...actual,
-    ReactFlow: ({ nodes, onNodeClick }: any) => (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ReactFlow: ({ nodes, onNodeClick }: { nodes: any[]; onNodeClick: (e: any, node: any) => void }) => (
       <div data-testid="react-flow">
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         {nodes.map((node: any) => (
           <div 
             key={node.id} 
@@ -23,7 +25,9 @@ vi.mock('@xyflow/react', async () => {
     ),
     Background: () => <div data-testid="background" />,
     Controls: () => <div data-testid="controls" />,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useNodesState: (initial: any) => [initial, vi.fn(), vi.fn()],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useEdgesState: (initial: any) => [initial, vi.fn(), vi.fn()],
   };
 });

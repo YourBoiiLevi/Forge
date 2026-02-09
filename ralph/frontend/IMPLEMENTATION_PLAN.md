@@ -127,43 +127,16 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 
 ### Phase 3: Main Views
 
-#### 3.2 Implement Captain Interview View
-**Complexity:** Large  
-**Dependencies:** 2.1, 1.3, 1.4
-
-Conversational interface for the Captain planning phase.
-
-**Acceptance Criteria:**
-- Chat pane layout (max 800px centered)
-- User messages: right-aligned, `--bg-surface` background
-- Captain messages: left-aligned, 2px orange left border
-- Character-by-character streaming of Captain responses
-- Tool usage display:
-  - Collapsible panels inline with Captain text
-  - Shows tool name + truncated command
-  - Expandable to show full args and results
-- Artifact creation indicators:
-  - Prominent when Captain creates spec/task/DAG
-  - Clickable → opens Artifacts Browser
-- Plan finalized banner
-- Plan review section after Captain finishes:
-  - List of created artifacts
-  - Each expandable to show content
-  - "Approve & Execute" button
-  - Optional "Edit Plan" button
-- Input area fixed at bottom
-- Disabled while Captain is generating
-
-**Required Tests:**
-- Messages render in correct positions
-- Streaming text appears character-by-character
-- Tool panels collapse/expand
-- Input disabled during generation
-- Approve button triggers execution
-
----
+#### 3.2 Implement Captain Interview View (Completed 2026-02-10)
+- Implemented `CaptainChat` view with `MessageBubble`, `ToolCall`, and `PlanReview` components.
+- Added message streaming simulation and thinking states.
+- Implemented interactive chat input with auto-resize.
+- Integrated mock plan generation and approval flow.
+- Added comprehensive unit tests for all chat components and interactions.
 
 #### 3.3 Implement Task Detail View
+**Complexity:** Large  
+**Dependencies:** 2.1, 2.2, 1.4
 **Complexity:** Large  
 **Dependencies:** 2.1, 2.2, 1.4
 
