@@ -100,6 +100,39 @@ function parseAfterQuery(value: unknown): string | undefined {
   return undefined;
 }
 
+function contentTypeForArtifactPath(relPosixPath: string): string {
+  const ext = path.posix.extname(relPosixPath).toLowerCase();
+  switch (ext) {
+    case '.json':
+      return 'application/json; charset=utf-8';
+    case '.ndjson':
+      return 'application/x-ndjson; charset=utf-8';
+    case '.md':
+      return 'text/markdown; charset=utf-8';
+    case '.txt':
+      return 'text/plain; charset=utf-8';
+    case '.html':
+      return 'text/html; charset=utf-8';
+    case '.css':
+      return 'text/css; charset=utf-8';
+    case '.js':
+      return 'text/javascript; charset=utf-8';
+    case '.png':
+      return 'image/png';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.gif':
+      return 'image/gif';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.webp':
+      return 'image/webp';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
 type DagStatus = {
   runId: string;
   updatedAt: string;
@@ -431,6 +464,50 @@ export function registerApiV1Routes(
       if (walkthrough !== undefined) out.walkthrough = walkthrough;
 
       res.status(200).json(out);
+    }),
+  );
+
+  // --- Artifacts ---
+
+  router.get(
+    '/runs/:runId/artifacts/:artifactPath(*)',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+      await readRunStateOrThrow(store, runId);
+
+      const artifactPathRaw = (req.params as Record<string, unknown>).artifactPath;
+      if (typeof artifactPathRaw !== 'string' || !artifactPathRaw) {
+        throw new HttpError(404, 'ARTIFACT_NOT_FOUND', 'Artifact not found', { runId });
+      }
+
+      const artifactPath = artifactPathRaw;
+
+      let absolutePath: string;
+      try {
+        absolutePath = store.resolveRunArtifactPath(runId, artifactPath);
+      } catch {
+        throw new HttpError(404, 'ARTIFACT_NOT_FOUND', 'Artifact not found', {
+          runId,
+          artifactPath,
+        });
+      }
+
+      let data: Buffer;
+      try {
+        data = await fs.readFile(absolutePath);
+      } catch (err) {
+        if (isErrno(err) && (err.code === 'ENOENT' || err.code === 'EISDIR')) {
+          throw new HttpError(404, 'ARTIFACT_NOT_FOUND', 'Artifact not found', {
+            runId,
+            artifactPath,
+          });
+        }
+        throw err;
+      }
+
+      res.status(200);
+      res.setHeader('Content-Type', contentTypeForArtifactPath(artifactPath));
+      res.send(data);
     }),
   );
 

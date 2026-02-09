@@ -5,7 +5,7 @@
 ## Status
 
 - **State:** Planning Complete — Ready for Implementation
-- **Last Updated:** 2026-02-09
+- **Last Updated:** 2026-02-10
 - **Total Tasks:** 25 prioritized tasks
 - **Phase:** Greenfield build — no existing backend code
 
@@ -264,6 +264,8 @@ artifacts/<runId>/
 #### Task 2.5: REST API Endpoints - Artifacts
 **Complexity:** Small  
 **Description:** Implement artifact retrieval endpoint.
+
+**Status:** Completed (2026-02-10)
 
 **Endpoint:** `GET /api/v1/runs/:runId/artifacts/:path`
 
@@ -734,7 +736,7 @@ artifacts/<runId>/
 | `/api/v1/runs/:runId/resume` | POST | Resume run | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/tasks` | GET | List tasks | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/tasks/:taskId` | GET | Get task detail | Completed (2026-02-09) |
-| `/api/v1/runs/:runId/artifacts/:path` | GET | Get artifact | Not Started |
+| `/api/v1/runs/:runId/artifacts/:path` | GET | Get artifact | Completed (2026-02-10) |
 | `/api/v1/runs/:runId/change-requests` | GET | List CRs | Not Started |
 | `/api/v1/runs/:runId/change-requests/:crId/approve` | POST | Approve CR | Not Started |
 | `/api/v1/captain/message` | POST | Send message to Captain | Not Started |
@@ -807,6 +809,10 @@ NODE_ENV=development                      # Environment
 - **Task 2.2: REST API Endpoints - Runs** — Added `/api/v1/runs` create+get+pause+resume endpoints backed by the artifact store (`run-state.json`) with request validation, standard error envelope, and unit tests.
 - **Task 2.3: NDJSON Event Stream Implementation** — Added `/api/v1/runs/:runId/stream` NDJSON endpoint with in-memory per-run circular buffering, `?after=` replay, and keepalive comments; added unit tests.
 - **Task 2.4: REST API Endpoints - Tasks** — Added `/api/v1/runs/:runId/tasks` and `/api/v1/runs/:runId/tasks/:taskId` backed by `artifacts/<runId>/tasks/*.md` plus `dag-status.json` with optional walkthrough inclusion; added unit tests.
+
+### 2026-02-10
+
+- **Task 2.5: REST API Endpoints - Artifacts** — Added `/api/v1/runs/:runId/artifacts/:path` endpoint with traversal-safe run-scoped path resolution, basic Content-Type detection, and unit tests.
 
 ---
 
