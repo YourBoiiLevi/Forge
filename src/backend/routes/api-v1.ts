@@ -7,6 +7,11 @@ import type { Express, NextFunction, Request, Response } from 'express';
 import express from 'express';
 
 import { ArtifactStore } from '../lib/artifact-store';
+import {
+  parseChangeRequestArtifactFrontmatter,
+  setYamlFrontmatterScalar,
+  type ChangeRequestStatus,
+} from '../lib/change-request-artifact';
 import type { EventHub } from '../lib/event-stream';
 import { HttpError } from '../lib/http-error';
 import { parseTaskArtifactFrontmatter, type TaskStatus, type TaskType } from '../lib/task-artifact';
@@ -93,6 +98,22 @@ async function readRunStateOrThrow(store: ArtifactStore, runId: string): Promise
 
 async function writeRunState(store: ArtifactStore, state: RunState): Promise<void> {
   await store.writeRunState(state.runId, state);
+}
+
+async function readChangeRequestMarkdownOrThrow(
+  store: ArtifactStore,
+  runId: string,
+  crId: string,
+): Promise<string> {
+  const rel = `change-requests/${crId}/change-request.md`;
+  try {
+    return await store.readText(runId, rel);
+  } catch (err) {
+    if (isErrno(err) && err.code === 'ENOENT') {
+      throw new HttpError(404, 'CR_NOT_FOUND', 'Change request not found', { runId, crId });
+    }
+    throw err;
+  }
 }
 
 function parseAfterQuery(value: unknown): string | undefined {
@@ -468,6 +489,112 @@ export function registerApiV1Routes(
   );
 
   // --- Artifacts ---
+
+  // --- Change Requests ---
+
+  router.get(
+    '/runs/:runId/change-requests',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+      await readRunStateOrThrow(store, runId);
+
+      const crDir = store.resolveRunArtifactPath(runId, 'change-requests');
+      let entries: Dirent[];
+      try {
+        entries = await fs.readdir(crDir, { withFileTypes: true });
+      } catch (err) {
+        if (isErrno(err) && err.code === 'ENOENT') {
+          res.status(200).json([]);
+          return;
+        }
+        throw err;
+      }
+
+      const items = await Promise.all(
+        entries
+          .filter((e) => e.isDirectory())
+          .map(async (e) => {
+            const crId = e.name;
+            let md: string;
+            try {
+              md = await store.readText(runId, `change-requests/${crId}/change-request.md`);
+            } catch (err) {
+              if (isErrno(err) && err.code === 'ENOENT') {
+                // Ignore incomplete CR directories.
+                return undefined;
+              }
+              // Ignore traversal/invalid-path rejections (e.g. unexpected directory names).
+              if (err instanceof Error && /artifact path/.test(err.message)) {
+                return undefined;
+              }
+              throw err;
+            }
+
+            let fm;
+            try {
+              fm = parseChangeRequestArtifactFrontmatter(md);
+            } catch {
+              throw new HttpError(500, 'INTERNAL_ERROR', 'Failed to load change requests');
+            }
+
+            const out: {
+              crId: string;
+              title: string;
+              emittedBy: string;
+              status: ChangeRequestStatus;
+              description: string;
+              impact: string[];
+              createdAt: string;
+            } = {
+              crId: fm.id,
+              title: fm.title,
+              emittedBy: fm.emitted_by,
+              status: fm.status,
+              description: fm.reason,
+              impact: fm.affected_tasks,
+              createdAt: fm.emitted_at,
+            };
+
+            return out;
+          }),
+      );
+
+      const filtered = items.filter((x): x is NonNullable<typeof x> => x !== undefined);
+      filtered.sort((a, b) => a.crId.localeCompare(b.crId));
+      res.status(200).json(filtered);
+    }),
+  );
+
+  router.post(
+    '/runs/:runId/change-requests/:crId/approve',
+    asyncHandler(async (req: Request, res: Response) => {
+      const runId = req.params.runId;
+      const crId = assertPathSegmentOrNotFound(req.params.crId, 'crId', 'CR_NOT_FOUND');
+      await readRunStateOrThrow(store, runId);
+
+      const md = await readChangeRequestMarkdownOrThrow(store, runId, crId);
+
+      let fm;
+      try {
+        fm = parseChangeRequestArtifactFrontmatter(md);
+      } catch {
+        throw new HttpError(500, 'INTERNAL_ERROR', 'Failed to load change request', { runId, crId });
+      }
+
+      if (fm.status !== 'pending') {
+        throw new HttpError(409, 'INVALID_STATE', 'Change request is not pending', {
+          runId,
+          crId,
+          status: fm.status,
+        });
+      }
+
+      const updated = setYamlFrontmatterScalar(md, 'status', 'approved');
+      await store.writeText(runId, `change-requests/${crId}/change-request.md`, updated);
+
+      res.status(200).json({ status: 'approved' });
+    }),
+  );
 
   router.get(
     '/runs/:runId/artifacts/:artifactPath(*)',

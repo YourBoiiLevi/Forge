@@ -283,6 +283,8 @@ artifacts/<runId>/
 **Complexity:** Small  
 **Description:** Implement change request listing and approval.
 
+**Status:** Completed (2026-02-10)
+
 **Endpoints:**
 | Method | Path | Description |
 |--------|------|-------------|
@@ -737,8 +739,8 @@ artifacts/<runId>/
 | `/api/v1/runs/:runId/tasks` | GET | List tasks | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/tasks/:taskId` | GET | Get task detail | Completed (2026-02-09) |
 | `/api/v1/runs/:runId/artifacts/:path` | GET | Get artifact | Completed (2026-02-10) |
-| `/api/v1/runs/:runId/change-requests` | GET | List CRs | Not Started |
-| `/api/v1/runs/:runId/change-requests/:crId/approve` | POST | Approve CR | Not Started |
+| `/api/v1/runs/:runId/change-requests` | GET | List CRs | Completed (2026-02-10) |
+| `/api/v1/runs/:runId/change-requests/:crId/approve` | POST | Approve CR | Completed (2026-02-10) |
 | `/api/v1/captain/message` | POST | Send message to Captain | Not Started |
 
 ---
@@ -813,6 +815,7 @@ NODE_ENV=development                      # Environment
 ### 2026-02-10
 
 - **Task 2.5: REST API Endpoints - Artifacts** — Added `/api/v1/runs/:runId/artifacts/:path` endpoint with traversal-safe run-scoped path resolution, basic Content-Type detection, and unit tests.
+- **Task 2.6: REST API Endpoints - Change Requests** — Added `/api/v1/runs/:runId/change-requests` listing and `/api/v1/runs/:runId/change-requests/:crId/approve` approval endpoints backed by `change-request.md` frontmatter; added unit tests.
 
 ---
 
