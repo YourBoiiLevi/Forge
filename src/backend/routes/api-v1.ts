@@ -88,17 +88,17 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
   router.post(
     '/runs',
     asyncHandler(async (req: Request, res: Response) => {
-    const body = (req.body ?? {}) as Record<string, unknown>;
-    const repoUrl = parseRepoUrl(body.repoUrl);
-    const model = parseModel(body.model);
+      const body = (req.body ?? {}) as Record<string, unknown>;
+      const repoUrl = parseRepoUrl(body.repoUrl);
+      const model = parseModel(body.model);
 
-    const runId = newRunId();
-    const state = newPlanningRunState({ runId, repoUrl, model, now: new Date() });
+      const runId = newRunId();
+      const state = newPlanningRunState({ runId, repoUrl, model, now: new Date() });
 
-    await store.ensureRunInitialized(runId);
-    await writeRunState(store, state);
+      await store.ensureRunInitialized(runId);
+      await writeRunState(store, state);
 
-    res.status(201).json({ runId, status: state.status });
+      res.status(201).json({ runId, status: state.status });
     }),
   );
 
@@ -117,26 +117,26 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
       const runId = req.params.runId;
       const state = await readRunStateOrThrow(store, runId);
 
-    if (state.status === 'paused' || state.status === 'completed' || state.status === 'failed') {
-      throw new HttpError(409, 'INVALID_STATE', 'Run cannot be paused in its current state', {
-        runId,
-        status: state.status,
-      });
-    }
+      if (state.status === 'paused' || state.status === 'completed' || state.status === 'failed') {
+        throw new HttpError(409, 'INVALID_STATE', 'Run cannot be paused in its current state', {
+          runId,
+          status: state.status,
+        });
+      }
 
-    // MVP: pause is only meaningful once tasks are being scheduled/executed.
-    if (state.status !== 'executing') {
-      throw new HttpError(409, 'INVALID_STATE', 'Run cannot be paused before execution starts', {
-        runId,
-        status: state.status,
-      });
-    }
+      // MVP: pause is only meaningful once tasks are being scheduled/executed.
+      if (state.status !== 'executing') {
+        throw new HttpError(409, 'INVALID_STATE', 'Run cannot be paused before execution starts', {
+          runId,
+          status: state.status,
+        });
+      }
 
-    const next: RunState = {
-      ...state,
-      status: 'paused',
-      currentPhase: 'paused',
-    };
+      const next: RunState = {
+        ...state,
+        status: 'paused',
+        currentPhase: 'paused',
+      };
 
       await writeRunState(store, next);
       res.status(200).json({ status: next.status });
@@ -149,17 +149,20 @@ export function registerApiV1Routes(app: Express, options: { artifactStore: Arti
       const runId = req.params.runId;
       const state = await readRunStateOrThrow(store, runId);
 
-    if (state.status !== 'paused') {
-      throw new HttpError(409, 'INVALID_STATE', 'Run is not paused', { runId, status: state.status });
-    }
+      if (state.status !== 'paused') {
+        throw new HttpError(409, 'INVALID_STATE', 'Run is not paused', {
+          runId,
+          status: state.status,
+        });
+      }
 
-    const nowIso = new Date().toISOString();
-    const next: RunState = {
-      ...state,
-      status: 'executing',
-      currentPhase: 'execution',
-      startedAt: state.startedAt ?? nowIso,
-    };
+      const nowIso = new Date().toISOString();
+      const next: RunState = {
+        ...state,
+        status: 'executing',
+        currentPhase: 'execution',
+        startedAt: state.startedAt ?? nowIso,
+      };
 
       await writeRunState(store, next);
       res.status(200).json({ status: next.status });
