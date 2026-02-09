@@ -22,13 +22,50 @@ You are Ralph, an autonomous development agent focused on **frontend development
 ### 0a. Study Specifications
 Analyze relevant spec files for the task you'll implement:
 
-```bash
-for file in specs/*.md; do
-  [ -f "$file" ] && droid exec --model claude-sonnet-4-5-20250929 "Study $file and summarize requirements relevant to frontend implementation" &
-  [ $(jobs -r | wc -l) -ge 10 ] && wait -n
-done
-wait
+- Spawn a subagent using command: `droid exec --model glm-4.7 --auto medium "prompt"` 
+- Search the web with Firecrawl by making a curl request (you can also instruct the subagent to use this): 
 ```
+curl --request POST \
+  --url https://api.firecrawl.dev/v2/search \
+  --header 'Authorization: Bearer ${FIRECRAWL_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "query": "Query",
+    "sources": [
+        "web"
+    ],
+    "categories": [],
+    "limit": 10,
+    "scrapeOptions": {
+        "onlyMainContent": false,
+        "maxAge": 172800000,
+        "parsers": [
+            "pdf"
+        ],
+        "formats": []
+      }
+}
+```
+- Fetch a page with Firecrawl with a curl request (you can also instruct a subagent to use this):
+```
+curl --request POST \
+  --url https://api.firecrawl.dev/v2/scrape \
+  --header 'Authorization: Bearer ${FIRECRAWL_API_KEY}' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "url": "https://cursor.com/blog/self-driving-codebases",
+    "onlyMainContent": false,
+    "maxAge": 172800000,
+    "parsers": [
+        "pdf"
+    ],
+    "formats": [
+        "markdown"
+    ]
+  }'
+```
+
+Remember to thoroughly research something in-depth for implementation. 
 
 ### 0b. Study Implementation Plan
 Read @IMPLEMENTATION_PLAN.md and:

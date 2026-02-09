@@ -1,46 +1,34 @@
-import React from 'react';
 import { cn } from '../../lib/utils';
 
-export type Status = 'pending' | 'running' | 'done' | 'failed' | 'merged' | 'stale';
+export type StatusType = 'pending' | 'running' | 'done' | 'failed' | 'merged' | 'stale';
 
 interface StatusLEDProps {
-  status: Status;
+  status: StatusType;
   className?: string;
   showLabel?: boolean;
 }
 
-const statusColors: Record<Status, string> = {
-  pending: 'bg-text-secondary',
-  running: 'bg-accent animate-pulse-led shadow-[0_0_8px_rgba(255,107,0,0.5)]',
-  done: 'bg-success',
-  failed: 'bg-error',
-  merged: 'bg-success/50', // Dim green
-  stale: 'bg-warning',
+const statusColors: Record<StatusType, string> = {
+  pending: 'bg-zinc-600',
+  running: 'bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]',
+  done: 'bg-green-500',
+  failed: 'bg-red-500',
+  merged: 'bg-emerald-700',
+  stale: 'bg-amber-600',
 };
 
-const statusLabels: Record<Status, string> = {
-  pending: 'PENDING',
-  running: 'RUNNING',
-  done: 'DONE',
-  failed: 'FAILED',
-  merged: 'MERGED',
-  stale: 'STALE',
-};
-
-export const StatusLED: React.FC<StatusLEDProps> = ({ status, className, showLabel = false }) => {
+export function StatusLED({ status, className, showLabel = false }: StatusLEDProps) {
   return (
-    <div className={cn("flex items-center gap-2", className)} role="status" aria-label={`Status: ${status}`}>
+    <div className="flex items-center gap-2" role="status">
       <div 
         className={cn(
-          "w-1.5 h-1.5 rounded-full", // 6px = 1.5 tailwind units
-          statusColors[status]
+          "w-1.5 h-1.5 rounded-full transition-all duration-300", 
+          statusColors[status],
+          className
         )}
+        aria-label={status}
       />
-      {showLabel && (
-        <span className="text-xs font-mono text-text-secondary uppercase tracking-wider">
-          {statusLabels[status]}
-        </span>
-      )}
+      {showLabel && <span className="text-xs uppercase text-zinc-500">{status}</span>}
     </div>
   );
-};
+}

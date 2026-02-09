@@ -1,45 +1,56 @@
-import React from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
+import { Loader2 } from 'lucide-react';
+import React, { ButtonHTMLAttributes, forwardRef } from 'react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg' | 'icon';
-  isLoading?: boolean;
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-sm text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-zinc-100 text-zinc-900 hover:bg-zinc-200/90",
+        destructive: "bg-red-500 text-white hover:bg-red-600/90",
+        outline: "border border-zinc-700 bg-transparent hover:bg-zinc-800 text-zinc-100",
+        secondary: "bg-zinc-800 text-zinc-100 hover:bg-zinc-800/80",
+        ghost: "hover:bg-zinc-800 hover:text-zinc-100",
+        link: "text-zinc-100 underline-offset-4 hover:underline",
+        primary: "bg-orange-600 text-white hover:bg-orange-700 border border-orange-500",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-sm px-3 text-xs",
+        lg: "h-10 rounded-sm px-8",
+        icon: "h-9 w-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  loading?: boolean;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, loading, children, ...props }, ref) => {
     return (
       <button
+        className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        className={cn(
-          "inline-flex items-center justify-center font-mono transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:pointer-events-none disabled:opacity-50 border border-transparent",
-          
-          // Variants
-          variant === 'primary' && "bg-accent text-white hover:bg-accent/90",
-          variant === 'secondary' && "bg-bg-surface text-text-primary hover:bg-border border-border",
-          variant === 'destructive' && "bg-error text-white hover:bg-error/90",
-          variant === 'outline' && "border-border bg-transparent hover:bg-bg-surface text-text-primary",
-          variant === 'ghost' && "hover:bg-bg-surface text-text-primary",
-          
-          // Sizes
-          size === 'sm' && "h-8 px-3 text-xs",
-          size === 'md' && "h-10 px-4 py-2 text-sm",
-          size === 'lg' && "h-12 px-8 text-base",
-          size === 'icon' && "h-10 w-10",
-          
-          className
-        )}
-        disabled={isLoading || props.disabled}
+        disabled={loading || props.disabled}
         {...props}
       >
-        {isLoading && (
-          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-        )}
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {children}
       </button>
     );
   }
 );
-
 Button.displayName = "Button";
+
+export { Button, buttonVariants };
