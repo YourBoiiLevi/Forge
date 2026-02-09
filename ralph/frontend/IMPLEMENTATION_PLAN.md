@@ -65,6 +65,11 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Added resilient NDJSON parsing with reconnection logic
 - Added tests for streaming utilities
 
+#### 2.2 Implement Status LED Component (Completed 2026-02-09)
+- Improved `StatusLED` component with correct status colors and animations
+- Added comprehensive unit tests
+- Fixed accessibility and labeling issues
+
 ### Phase 2: Core Components
 
 #### 2.1 Create App Shell and Routing (Completed 2026-02-09)
@@ -86,30 +91,6 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Added "Pause All" button and status indicators
 - Created placeholder views for Dashboard, Captain, Tasks, Refinery, Artifacts, Changes
 - Added comprehensive tests for routing and shell components
-
-#### 2.2 Implement Status LED Component
-**Complexity:** Small  
-**Dependencies:** 1.2
-
-Create reusable status LED indicator.
-
-**Acceptance Criteria:**
-- Status LED component (`<StatusLED status={...} />`)
-- Supports all statuses: pending, running, done, failed, merged, stale
-- Color mapping per spec:
-  - Gray: pending/idle
-  - Orange with pulse: running/active
-  - Green: done/passed
-  - Red: failed/blocked
-  - Dim green: merged
-  - Amber: stale/degraded
-- 6px circular indicator (only permitted circular element)
-- CSS pulse animation for running state
-
-**Required Tests:**
-- Renders correct color for each status
-- Animation plays for running status
-- Accessible (has text label, not color-only)
 
 ---
 
