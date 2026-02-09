@@ -571,6 +571,10 @@ artifacts/<runId>/
 **Complexity:** Medium  
 **Description:** Implement git operations: clone, checkout, merge, commit, push.
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Implemented `SandboxGit` helpers with strict ref/branch validation, structured commit message formatting, and exponential backoff (with jitter) for remote operations; added unit tests for clone env passthrough, branch naming, dependency merge ordering, commit format, and push retries.
+
 **Deliverables:**
 - `src/backend/lib/sandbox/git.ts`
 - Branch naming: `forge/<taskId>/<attemptId>`
@@ -838,6 +842,7 @@ NODE_ENV=development                      # Environment
 - **Task 3.1: DAG Schema Implementation** — Added `src/backend/lib/dag/{types,validation,status}.ts` with DAG types, cycle/dangling-dependency validation, topological sort, and status transition enforcement; added unit tests.
 - **Task 3.2: Task Markdown Parser** — Added `src/backend/lib/task-parser.ts` to parse task markdown YAML frontmatter + body with schema validation and clear errors; added unit tests.
 - **Task 5.1: E2B Sandbox Manager** — Added `src/backend/lib/sandbox/manager.ts` implementing E2B sandbox lifecycle management (create/connect/pause/kill), metadata tracking, and env injection; added unit tests with a fake sandbox implementation.
+- **Task 5.2: Git Operations in Sandbox** — Added `src/backend/lib/sandbox/git.ts` implementing clone/checkout/fetch+merge/commit/push with Forge branch naming, structured commit messages, and exponential backoff for remote operations; added unit tests.
 
 ---
 
