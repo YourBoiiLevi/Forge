@@ -1,6 +1,6 @@
 import { AlertTriangle, CheckCircle, FileText } from 'lucide-react';
 
-interface Walkthrough {
+export interface Walkthrough {
   title: string;
   summary: string;
   files_changed: Array<{

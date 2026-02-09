@@ -143,33 +143,12 @@ The frontend for Forge needs to be built from scratch. The `src/frontend/` direc
 - Integrated `useEventStream` for live updates via NDJSON.
 - Added comprehensive unit tests for all components.
 
-#### 3.4 Implement Refinery View
-**Complexity:** Medium  
-**Dependencies:** 2.1, 2.2, 1.4
-
-Dedicated view for merge and integration monitoring.
-
-**Acceptance Criteria:**
-- Merge progress table showing:
-  - Source branch
-  - Target branch
-  - Status LED
-  - Merge strategy
-- Conflict indicators:
-  - Panel listing conflicting files
-  - Resolution status per file
-  - Visual urgency for unresolved
-- Integration test results section
-- Change Request emission banner
-- Sub-agent spawning panel (shows spawned agents)
-- Refinery progress timeline/log
-
-**Required Tests:**
-- Merge status updates in real-time
-- Conflict files displayed correctly
-- Test results render with pass/fail
-
----
+#### 3.4 Implement Refinery View (Completed 2026-02-10)
+- Implemented `RefineryView` with `MergeStatusTable`, `ConflictPanel`, and `IntegrationResults` components.
+- Added mock data integration for merges, conflicts, and test results.
+- Implemented interactive branch selection and status-based rendering.
+- Added comprehensive unit tests for all Refinery components.
+- Integrated `ActiveAgentsPanel` and `CRBanner` for full view context.
 
 #### 3.5 Implement Artifacts Browser View
 **Complexity:** Medium  
