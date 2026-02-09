@@ -540,6 +540,10 @@ artifacts/<runId>/
 **Complexity:** Medium  
 **Description:** Implement sandbox lifecycle management using @e2b/code-interpreter.
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Implemented `SandboxManager` with create/connect (resume), pause, kill, command execution, and file read/write operations. Added dependency injection so unit tests can run without requiring a real E2B API key.
+
 **Deliverables:**
 - `src/backend/lib/sandbox/manager.ts` — SandboxManager class
 - Create, pause, resume, kill operations
@@ -833,6 +837,7 @@ NODE_ENV=development                      # Environment
 - **Task 2.7: Captain Messaging Endpoint** — Added `/api/v1/captain/message` endpoint with validation, 202 acknowledgements, 409 state gating, and NDJSON stream event emission; added unit tests.
 - **Task 3.1: DAG Schema Implementation** — Added `src/backend/lib/dag/{types,validation,status}.ts` with DAG types, cycle/dangling-dependency validation, topological sort, and status transition enforcement; added unit tests.
 - **Task 3.2: Task Markdown Parser** — Added `src/backend/lib/task-parser.ts` to parse task markdown YAML frontmatter + body with schema validation and clear errors; added unit tests.
+- **Task 5.1: E2B Sandbox Manager** — Added `src/backend/lib/sandbox/manager.ts` implementing E2B sandbox lifecycle management (create/connect/pause/kill), metadata tracking, and env injection; added unit tests with a fake sandbox implementation.
 
 ---
 
