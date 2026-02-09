@@ -353,6 +353,10 @@ artifacts/<runId>/
 **Complexity:** Small  
 **Description:** Parse task files with YAML frontmatter and markdown body.
 
+**Status:** Completed (2026-02-10)
+
+**Notes:** Implemented `src/backend/lib/task-parser.ts` with TypeBox+AJV validation and required section checks; added dedicated unit tests.
+
 **Deliverables:**
 - `src/backend/lib/task-parser.ts` — Parse task files
 - Frontmatter extraction (id, title, type, dependencies, acceptance_criteria, etc.)
@@ -824,6 +828,7 @@ NODE_ENV=development                      # Environment
 - **Task 2.6: REST API Endpoints - Change Requests** — Added `/api/v1/runs/:runId/change-requests` listing and `/api/v1/runs/:runId/change-requests/:crId/approve` approval endpoints backed by `change-request.md` frontmatter; added unit tests.
 - **Task 2.7: Captain Messaging Endpoint** — Added `/api/v1/captain/message` endpoint with validation, 202 acknowledgements, 409 state gating, and NDJSON stream event emission; added unit tests.
 - **Task 3.1: DAG Schema Implementation** — Added `src/backend/lib/dag/{types,validation,status}.ts` with DAG types, cycle/dangling-dependency validation, topological sort, and status transition enforcement; added unit tests.
+- **Task 3.2: Task Markdown Parser** — Added `src/backend/lib/task-parser.ts` to parse task markdown YAML frontmatter + body with schema validation and clear errors; added unit tests.
 
 ---
 
